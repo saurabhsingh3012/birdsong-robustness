@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "birdsong-robustness"
+version = "0.1.0"
+description = "A controlled-degradation robustness benchmark for bioacoustic classifiers."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "Saurabh Singh", email = "singh.saurabh3012@gmail.com" }]
+keywords = ["bioacoustics", "robustness", "benchmark", "birdnet", "audio", "dsp"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Multimedia :: Sound/Audio :: Analysis",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4", "ruff>=0.4"]
+
+[project.urls]
+Homepage = "https://github.com/saurabhsingh3012/birdsong-robustness"
+Issues = "https://github.com/saurabhsingh3012/birdsong-robustness/issues"
+
+[project.scripts]
+birdsong-validate = "birdsong_robustness.validate:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "RUF"]
+ignore = [
+    "E501",   # line length is handled by the formatter
+    "B905",   # zip(strict=) not available on the full supported range
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]

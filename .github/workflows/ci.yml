@@ -1,0 +1,75 @@
+name: CI
+
+# Three gates, in the order that fails fastest first: style, then the unit tests that pin the
+# degradation maths, then the end-to-end validation harness. The validation step is the one that
+# matters most for this repository -- it is the check that every degradation measures back the
+# parameter it was asked for. It exits non-zero if any axis drifts out of tolerance, so a
+# regression in the DSP fails the build rather than silently changing what the benchmark means.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint and format (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install ruff
+        run: pip install "ruff>=0.4"
+      - name: Lint
+        run: ruff check .
+      - name: Format check
+        run: ruff format --check .
+
+  test:
+    name: Unit tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.10 is the floor declared in pyproject; 3.12 guards against a NumPy 2.x regression,
+        # which is why verify.py binds np.trapezoid across the 1.x/2.x rename rather than pinning.
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Run tests
+        run: pytest -q
+
+  validate:
+    name: Degradation pipeline validation
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: pip install -e .
+      - name: Requested-vs-measured validation
+        # Non-zero exit if any degradation drifts out of tolerance. This is the honest,
+        # verifiable claim the project makes; CI is where it is re-checked on every change.
+        run: birdsong-validate --json validation_results.json
+      - name: Upload validation results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-results
+          path: validation_results.json
