@@ -1,0 +1,42 @@
+# --- Real-audio evaluation artefacts: never committed ---
+# Xeno-canto audio carries per-recording Creative Commons terms that vary by
+# recording, so no audio is redistributed here. The dataset is rebuilt locally
+# from data/ by scripts/build_dataset.py; only its provenance (DATA_SOURCES.md)
+# and the measured results (docs/real_eval_results.json) are committed.
+data/
+*.wav
+*.mp3
+*.flac
+*.ogg
+*.npy
+
+# BirdNET / TFLite model weights and any downloaded model cache: never committed.
+models/
+*.tflite
+.birdnet/
+checkpoints/
+
+# Credentials: the Xeno-canto API key and any token must never be committed.
+*key*.txt
+*.env
+.env
+secrets*.md
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.eggs/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.so
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

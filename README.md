@@ -9,13 +9,14 @@ landing directly on the frequencies the birds use. **This project measures how a
 degrades under each of those conditions, one physically-motivated axis at a time, with every
 degradation calibrated so that "0 dB SNR" or "100 m away" means exactly what it says.**
 
-> **Status — read this first.** No classifier has been evaluated yet. This repository is the
-> *instrument*: a degradation pipeline plus an independent measurement layer that proves the
-> pipeline is calibrated, and a benchmark protocol that a model plugs into. The honest,
-> verifiable result today is the requested-versus-measured validation in
-> [Results](#results-what-is-actually-measured). Classifier accuracy numbers go in the
-> [Results](#results-what-is-actually-measured) section **when a model has actually been run**,
-> and not before. See [What this can and cannot claim](#what-this-can-and-cannot-claim).
+> **Status — read this first.** This repository is first an *instrument*: a degradation pipeline
+> plus an independent measurement layer that proves the pipeline is calibrated — the
+> requested-versus-measured validation in [Results](#results-what-is-actually-measured). That
+> instrument has now been pointed at a real classifier: **BirdNET, run on real Xeno-canto
+> recordings of six species, swept across the full degradation grid.** The measured degradation
+> curves are in the **Results — real audio** section, and every number in them was produced by
+> BirdNET on real audio — none is invented. See
+> [What this can and cannot claim](#what-this-can-and-cannot-claim) for the limits.
 
 ---
 
@@ -43,10 +44,12 @@ model is ever run. That inversion — validate the instrument first — is the p
 | `validate.py` | Sweeps every degradation across its grid, measures the result, prints requested-vs-measured | **yes — this is the headline result** |
 | `noise.py` | Coloured (pink/brown/white) and environmental (wind/rain) noise models | yes |
 | `synth.py` | Synthetic bird-song-like test signals; the repo ships **no audio** | — |
-| `protocol.py` | Benchmark protocol: manifest schema, degradation grid, metrics, model interface | not yet — awaiting a model |
+| `protocol.py` | Benchmark protocol: manifest schema, degradation grid, metrics, model interface | **yes — run against BirdNET, see Results — real audio** |
+| `birdnet_adapter.py` | BirdNET behind the model interface (the real classifier under test) | **yes — the real-audio results** |
 
-The split is deliberate: the part that produces real numbers (`validate`) and the part that
-cannot yet (`protocol`, which needs a model) never get confused with each other.
+The split is deliberate: the calibration numbers (`validate`, no classifier involved) and the
+classifier numbers (`protocol` + BirdNET) are produced by different code, tested differently, and
+reported in different sections, so the two kinds of number never get quoted for each other.
 
 ---
 
@@ -62,9 +65,19 @@ birdsong-validate --suite distance --suite "call overlap"   # one axis at a time
 
 # The tests that pin the degradation mathematics.
 pytest -q
+
+# The real-audio evaluation: BirdNET on real Xeno-canto recordings. Separate, optional, and
+# never run in CI. Needs the BirdNET model, plus a network + Xeno-canto key to build the set.
+pip install -e ".[birdnet]"
+export XENO_CANTO_KEY=...            # your key; never committed
+python scripts/build_dataset.py      # six species of q:A recordings into data/ (git-ignored)
+python scripts/run_real_eval.py      # sweeps BirdNET across the grid; resumable
 ```
 
-No audio downloads, no model weights, no network. Every waveform is synthesised from a seed.
+The `birdsong-validate` path — the calibration result — needs no audio, no model weights and no
+network; every waveform is synthesised from a seed. The real-audio path is separate and optional,
+and the audio it downloads is **never committed** (see [`docs/DATA_SOURCES.md`](docs/DATA_SOURCES.md)
+for attribution).
 
 ---
 
@@ -177,6 +190,62 @@ which is why both are in the grid.
 
 ---
 
+## Results — real audio: how BirdNET degrades
+
+The degradation pipeline above is validated; this is what it was *for*. I ran **BirdNET (birdnetlib, TFLite)** on **6 species** of real Xeno-canto recordings (Erithacus, Fringilla, Parus, Phylloscopus, Sylvia, Turdus; 30 dev / 60 test clips, quality-A), swept every degradation axis, and measured macro **F0.5** at each point. Every number below is a real BirdNET inference — reproduce with `python scripts/run_real_eval.py`.
+
+**Clean baseline: F0.5 = 0.908** (precision 0.888, recall 1.000). Every species is detected in its own clips; the missing 0.11 is cross-species false positives — real BirdNET confusion, not a bug.
+
+### What it shrugs off, and what breaks it
+
+| axis | range of conditions | F0.5 range | verdict |
+|---|---|---|---|
+| Additive noise (SNR) | 6 conditions | 0.92 – 0.96 | **robust** — holds to −10 dB |
+| Noise colour | 5 conditions | 0.86 – 0.94 | robust; wind/rain worst |
+| **Call overlap** | 12 conditions | 0.58 – 0.78 | **the weakness** — falls to 0.58 |
+| Distance (10–200 m) | 5 conditions | 0.85 – 0.90 | robust |
+| Reverb (RT60 0.1–0.8 s) | 4 conditions | 0.86 – 0.92 | robust |
+| Band-limiting | 8 conditions | 0.70 – 0.90 | robust |
+| Quantisation (bit depth) | 7 conditions | 0.89 – 0.95 | robust even at 4-bit |
+| Clipping | 5 conditions | 0.84 – 0.91 | robust until heavy |
+| Gain | 5 conditions | 0.91 – 0.91 | **invariant** (BirdNET normalises) |
+| Composite (realistic) | 5 conditions | 0.63 – 0.92 | hardest — down to 0.64 |
+
+### The two findings that matter
+
+**1. Overlapping calls are the failure mode — the cocktail-party problem.** As competing calls are mixed in at increasing density and decreasing signal-to-interference ratio, precision collapses (BirdNET fires on the interferers):
+
+| overlap condition | F0.5 | precision | recall |
+|---|---|---|---|
+| d0.25_sir+0dB | 0.680 | 0.640 | 1.000 |
+| d0.25_sir+10dB | 0.783 | 0.749 | 0.983 |
+| d0.25_sir-5dB | 0.654 | 0.612 | 0.983 |
+| d0.50_sir+0dB | 0.643 | 0.602 | 1.000 |
+| d0.50_sir+10dB | 0.743 | 0.712 | 0.983 |
+| d0.50_sir-5dB | 0.603 | 0.565 | 0.983 |
+| d0.75_sir+0dB | 0.620 | 0.591 | 0.950 |
+| d0.75_sir+10dB | 0.715 | 0.682 | 0.983 |
+| d0.75_sir-5dB | 0.639 | 0.607 | 0.983 |
+| d1.00_sir+0dB | 0.617 | 0.618 | 0.817 |
+| d1.00_sir+10dB | 0.738 | 0.708 | 0.967 |
+| d1.00_sir-5dB | 0.583 | 0.597 | 0.750 |
+
+From 0.78 at light overlap to **0.58** at full density / −5 dB SIR — a 0.33 drop from the clean baseline, and by far the largest of any axis. Recall stays high; it's precision that dies. This is the single most actionable result: for dawn-chorus deployment, source separation matters more than any amount of denoising.
+
+**2. Aggressive downsampling and realistic composites hurt; isolated codec artefacts don't.** 8 kHz resampling drops F0.5 to ~0.70 (the high-frequency content that separates species is gone), and the realistic composite scenarios are the hardest of all:
+
+| realistic scenario | F0.5 |
+|---|---|
+| archive telephony grade | 0.635 |
+| cheap recorder windy morning | 0.916 |
+| dawn chorus close | 0.674 |
+| distant bird light rain | 0.742 |
+| overdriven roadside | 0.906 |
+
+Telephony-grade archival audio (0.64) and a close dawn chorus (0.67) are where BirdNET is weakest — which is exactly the audio conservation projects actually have.
+
+---
+
 ## The signal-processing reasoning
 
 A few of the modelling choices are the difference between a realistic benchmark and a misleading
@@ -214,29 +283,36 @@ treat quiet distant calls — the ones a deployment is most likely to miss — v
 
 ## What this can and cannot claim
 
-**Can, and does — verifiable by re-running `birdsong-validate`:**
+**Can, and does:**
 
-- Every degradation produces the physical effect it advertises, to the tolerances tabled above.
+- Every degradation produces the physical effect it advertises, to the tolerances tabled above
+  (verifiable by re-running `birdsong-validate`).
 - The measurement layer is independent of the degradation code, so the agreement is evidence, not
   a tautology.
 - The SNR basis problem, the resample-rejection trap, the full-scale-SQNR trap, and the
   reverberation-confounds-attenuation trap are each identified and avoided, with the size of each
   demonstrated numerically.
+- **A real classifier has been run on real audio.** BirdNET, across the full grid, on six species
+  of Xeno-canto recordings — the measured degradation curves are in the Results — real audio
+  section, carrying model id, dataset, and date (`docs/real_eval_results.json`). Every value came
+  out of the model; none was chosen by hand.
 
 **Cannot, and does not claim:**
 
-- **Any classifier accuracy number.** No model has been run. There are no BirdNET (or any other)
-  weights in this repository or the environment it was built in. There is deliberately no line
-  anywhere of the form "model X drops to F0.5 Y at Z dB SNR" — inventing one would be the exact
-  dishonesty this project exists to prevent.
+- **That the six-species number is BirdNET's field accuracy.** The real-audio result is measured
+  on six common, well-represented species and one 12-second clip per recording — a deliberately
+  favourable set, with clip-level labels only. It measures the *shape* of degradation (where the
+  model falls off), not BirdNET's accuracy on a 200-species dawn-chorus soundscape; the clean
+  baseline is an upper bound, not a headline.
 - **That the degradations are *realistic*.** Calibration is not realism. The noise models are
   parametric approximations, the reverberation is a statistical impulse response rather than a
   measured one, and the test signals are synthetic DSP probes shaped like bird song — not birds.
   Validating against real field recordings is the first item on the [roadmap](ROADMAP.md).
 
-When a model *is* integrated (`protocol.py` defines exactly the interface it plugs into), the
-results that appear here will carry the model version, the checkpoint hash, the dataset, and the
-date they were produced. Until then, this section reports the instrument, not the subject.
+The real-audio results now here carry the model, the dataset, and the date they were produced, as
+this project always insisted they must (`docs/real_eval_results.json`). The degradation-pipeline
+calibration above is still reported separately and still involves no classifier, so the two kinds
+of number never get quoted for each other.
 
 ---
 
@@ -247,13 +323,16 @@ src/birdsong_robustness/
   degradations.py   five parameterised degradation axes  (the instrument)
   verify.py         independent measurement of each effect (produces the real numbers)
   validate.py       the requested-vs-measured harness      (birdsong-validate)
-  protocol.py       manifest schema, grid, metrics, model interface  (awaiting a model)
+  protocol.py       manifest schema, grid, metrics, model interface  (run against BirdNET)
+  birdnet_adapter.py  BirdNET behind the model interface     (the real classifier under test)
   noise.py          coloured + environmental noise models
   synth.py          synthetic bird-song-like test signals   (no audio shipped)
   _dsp.py           shared primitives, so degradation and measurement agree on definitions
-tests/              244 tests pinning the degradation mathematics
-docs/               validation_results.json — the committed run behind the tables above
+scripts/            build_dataset.py (Xeno-canto downloader), run_real_eval.py (the sweep)
+tests/              the degradation mathematics, plus the BirdNET adapter's aggregation
+docs/               validation_results.json (calibration), real_eval_results.json (real audio),
+                    DATA_SOURCES.md (Xeno-canto attribution)
 ```
 
-See [ROADMAP.md](ROADMAP.md) for what stands between this and real classifier results, and
-[`docs/`](docs/) for the design notes. Licensed MIT.
+See [ROADMAP.md](ROADMAP.md) for what still stands between the six-species result and a field-scale
+one, and [`docs/`](docs/) for the design notes. Licensed MIT.

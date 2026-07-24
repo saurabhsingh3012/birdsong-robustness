@@ -376,6 +376,13 @@ def test_evaluate_is_deterministic():
         assert a.macro[label].f_beta == b.macro[label].f_beta
 
 
-def test_protocol_status_is_unambiguous():
-    """A machine-readable guarantee that the 'no model yet' banner exists and says so."""
-    assert "no classifier" in protocol.PROTOCOL_STATUS.lower()
+def test_protocol_status_records_the_real_run():
+    """A machine-readable guarantee that the real classifier run is recorded, with provenance.
+
+    The banner used to promise 'no model yet'. A model has now been run (BirdNET, on real
+    Xeno-canto audio), so the invariant flips: the status must name the classifier and point at
+    the committed results, so no one can quote a number without its provenance.
+    """
+    status = protocol.PROTOCOL_STATUS.lower()
+    assert "birdnet" in status
+    assert "real_eval_results.json" in status

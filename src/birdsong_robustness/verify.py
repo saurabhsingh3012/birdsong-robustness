@@ -5,14 +5,13 @@ module re-derives an effect from the *output waveform*, using a method that does
 with the function that produced it. Where a shared definition is unavoidable -- what "power"
 means, say -- it lives in :mod:`birdsong_robustness._dsp` so both sides provably agree.
 
-Why this module is the honest contribution
-------------------------------------------
-No classifier has been run against this benchmark yet (there are no model weights in this
-environment and none are committed to the repository). So the claim "BirdNET loses N points of
-F0.5 at 0 dB SNR" cannot be made, and is not made anywhere in this project.
-
-What *can* be established, and is, is that the instrument is calibrated: that requesting 0 dB
-SNR produces a mixture measuring 0 dB, that requesting a 100 m propagation attenuates by the
+Why this module is what makes the real numbers quotable
+-------------------------------------------------------
+A real classifier has now been run against this benchmark -- BirdNET, on a Xeno-canto set (see
+the README's "Results -- real audio"). A curve such as "BirdNET holds to about 5 dB SNR, then
+falls off" is only worth quoting if 0 dB SNR really is 0 dB SNR and 100 m really is 100 m. This
+module is what earns that: independently of the degradation code, it establishes that requesting
+0 dB SNR produces a mixture measuring 0 dB, that requesting a 100 m propagation attenuates by the
 amount ISO 9613-1 predicts for 100 m, that requesting an 8 kHz band limit produces a signal
 whose measured -3 dB point is at 8 kHz, that requesting a 0.6 s RT60 produces an impulse
 response whose Schroeder decay measures 0.6 s. A benchmark whose degradation axes have not been

@@ -26,6 +26,15 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=7.4", "ruff>=0.4"]
+# The real-audio evaluation (scripts/build_dataset.py, scripts/run_real_eval.py). Not needed to
+# run the degradation pipeline, the tests, or birdsong-validate; CI installs none of it. BirdNET
+# is pulled in via birdnetlib, which needs a TFLite backend (tflite-runtime, or tensorflow).
+birdnet = [
+    "birdnetlib>=0.18",
+    "librosa>=0.10",
+    "soundfile>=0.12",
+    "tflite-runtime>=2.14; platform_system == 'Linux'",
+]
 
 [project.urls]
 Homepage = "https://github.com/saurabhsingh3012/birdsong-robustness"

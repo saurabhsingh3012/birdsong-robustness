@@ -1,0 +1,1004 @@
+{
+  "meta": {
+    "classifier": "BirdNET (birdnetlib, TFLite)",
+    "aggregation": "max-over-3s-windows",
+    "dataset_id": "xeno-canto-6sp-v1",
+    "species": [
+      "Erithacus rubecula",
+      "Fringilla coelebs",
+      "Parus major",
+      "Phylloscopus collybita",
+      "Sylvia atricapilla",
+      "Turdus merula"
+    ],
+    "n_species": 6,
+    "n_dev_clips": 30,
+    "n_test_clips": 60,
+    "clip_seconds": 12.0,
+    "sample_rate_hz": 48000,
+    "beta": 0.5,
+    "threshold": 0.07,
+    "seed": 0,
+    "date": "2026-07-24",
+    "note": "Every number here was produced by BirdNET on real Xeno-canto audio via scripts/run_real_eval.py; none is invented. Clip-level labels only (no strong labels): the SNR and overlap axes use the energy-based active-region estimate documented in degradations.add_noise_at_snr, whose error propagates into them."
+  },
+  "clean_baseline": {
+    "macro": {
+      "f_beta": 0.9077,
+      "precision": 0.8883,
+      "recall": 1.0,
+      "tp": 60,
+      "fp": 8,
+      "fn": 0,
+      "support": 60
+    },
+    "per_species": {
+      "Erithacus rubecula": {
+        "f_beta": 0.9259,
+        "precision": 0.9091,
+        "recall": 1.0,
+        "tp": 10,
+        "fp": 1,
+        "fn": 0,
+        "support": 10
+      },
+      "Fringilla coelebs": {
+        "f_beta": 0.9259,
+        "precision": 0.9091,
+        "recall": 1.0,
+        "tp": 10,
+        "fp": 1,
+        "fn": 0,
+        "support": 10
+      },
+      "Parus major": {
+        "f_beta": 0.8065,
+        "precision": 0.7692,
+        "recall": 1.0,
+        "tp": 10,
+        "fp": 3,
+        "fn": 0,
+        "support": 10
+      },
+      "Phylloscopus collybita": {
+        "f_beta": 0.8621,
+        "precision": 0.8333,
+        "recall": 1.0,
+        "tp": 10,
+        "fp": 2,
+        "fn": 0,
+        "support": 10
+      },
+      "Sylvia atricapilla": {
+        "f_beta": 0.9259,
+        "precision": 0.9091,
+        "recall": 1.0,
+        "tp": 10,
+        "fp": 1,
+        "fn": 0,
+        "support": 10
+      },
+      "Turdus merula": {
+        "f_beta": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 10,
+        "fp": 0,
+        "fn": 0,
+        "support": 10
+      }
+    }
+  },
+  "axes": {
+    "clean": [
+      {
+        "label": "clean",
+        "f_beta": 0.9077,
+        "precision": 0.8883,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 8,
+        "fn": 0,
+        "support": 60,
+        "params": {}
+      }
+    ],
+    "snr": [
+      {
+        "label": "snr_pink_-10dB",
+        "f_beta": 0.9197,
+        "precision": 1.0,
+        "recall": 0.7333,
+        "tp": 44,
+        "fp": 0,
+        "fn": 16,
+        "support": 60,
+        "level": -10.0,
+        "params": {
+          "noise_type": "pink",
+          "snr_db": -10.0
+        }
+      },
+      {
+        "label": "snr_pink_-5dB",
+        "f_beta": 0.944,
+        "precision": 0.964,
+        "recall": 0.8833,
+        "tp": 53,
+        "fp": 2,
+        "fn": 7,
+        "support": 60,
+        "level": -5.0,
+        "params": {
+          "noise_type": "pink",
+          "snr_db": -5.0
+        }
+      },
+      {
+        "label": "snr_pink_+0dB",
+        "f_beta": 0.9401,
+        "precision": 0.9389,
+        "recall": 0.95,
+        "tp": 57,
+        "fp": 4,
+        "fn": 3,
+        "support": 60,
+        "level": 0.0,
+        "params": {
+          "noise_type": "pink",
+          "snr_db": 0.0
+        }
+      },
+      {
+        "label": "snr_pink_+5dB",
+        "f_beta": 0.9563,
+        "precision": 0.964,
+        "recall": 0.9333,
+        "tp": 56,
+        "fp": 2,
+        "fn": 4,
+        "support": 60,
+        "level": 5.0,
+        "params": {
+          "noise_type": "pink",
+          "snr_db": 5.0
+        }
+      },
+      {
+        "label": "snr_pink_+10dB",
+        "f_beta": 0.9455,
+        "precision": 0.953,
+        "recall": 0.9333,
+        "tp": 56,
+        "fp": 3,
+        "fn": 4,
+        "support": 60,
+        "level": 10.0,
+        "params": {
+          "noise_type": "pink",
+          "snr_db": 10.0
+        }
+      },
+      {
+        "label": "snr_pink_+20dB",
+        "f_beta": 0.9543,
+        "precision": 0.9515,
+        "recall": 0.9667,
+        "tp": 58,
+        "fp": 3,
+        "fn": 2,
+        "support": 60,
+        "level": 20.0,
+        "params": {
+          "noise_type": "pink",
+          "snr_db": 20.0
+        }
+      }
+    ],
+    "noise_type": [
+      {
+        "label": "noise_brown_0dB",
+        "f_beta": 0.9218,
+        "precision": 0.906,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 7,
+        "fn": 0,
+        "support": 60,
+        "params": {
+          "noise_type": "brown",
+          "snr_db": 0.0
+        }
+      },
+      {
+        "label": "noise_pink_0dB",
+        "f_beta": 0.9442,
+        "precision": 0.9478,
+        "recall": 0.9333,
+        "tp": 56,
+        "fp": 3,
+        "fn": 4,
+        "support": 60,
+        "params": {
+          "noise_type": "pink",
+          "snr_db": 0.0
+        }
+      },
+      {
+        "label": "noise_rain_0dB",
+        "f_beta": 0.8603,
+        "precision": 1.0,
+        "recall": 0.6167,
+        "tp": 37,
+        "fp": 0,
+        "fn": 23,
+        "support": 60,
+        "params": {
+          "noise_type": "rain",
+          "snr_db": 0.0
+        }
+      },
+      {
+        "label": "noise_white_0dB",
+        "f_beta": 0.8798,
+        "precision": 0.8693,
+        "recall": 0.95,
+        "tp": 57,
+        "fp": 11,
+        "fn": 3,
+        "support": 60,
+        "params": {
+          "noise_type": "white",
+          "snr_db": 0.0
+        }
+      },
+      {
+        "label": "noise_wind_0dB",
+        "f_beta": 0.8648,
+        "precision": 0.8372,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 12,
+        "fn": 0,
+        "support": 60,
+        "params": {
+          "noise_type": "wind",
+          "snr_db": 0.0
+        }
+      }
+    ],
+    "overlap": [
+      {
+        "label": "overlap_d0.25_sir+0dB",
+        "f_beta": 0.6802,
+        "precision": 0.6401,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 54,
+        "fn": 0,
+        "support": 60,
+        "params": {
+          "overlap_density": 0.25
+        }
+      },
+      {
+        "label": "overlap_d0.25_sir+10dB",
+        "f_beta": 0.7826,
+        "precision": 0.7487,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 23,
+        "fn": 1,
+        "support": 60,
+        "params": {
+          "overlap_density": 0.25,
+          "overlap_sir_db": 10.0
+        }
+      },
+      {
+        "label": "overlap_d0.25_sir-5dB",
+        "f_beta": 0.6536,
+        "precision": 0.6119,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 50,
+        "fn": 1,
+        "support": 60,
+        "params": {
+          "overlap_density": 0.25,
+          "overlap_sir_db": -5.0
+        }
+      },
+      {
+        "label": "overlap_d0.50_sir+0dB",
+        "f_beta": 0.6428,
+        "precision": 0.6018,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 66,
+        "fn": 0,
+        "support": 60,
+        "params": {
+          "overlap_density": 0.5
+        }
+      },
+      {
+        "label": "overlap_d0.50_sir+10dB",
+        "f_beta": 0.7429,
+        "precision": 0.7118,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 36,
+        "fn": 1,
+        "support": 60,
+        "params": {
+          "overlap_density": 0.5,
+          "overlap_sir_db": 10.0
+        }
+      },
+      {
+        "label": "overlap_d0.50_sir-5dB",
+        "f_beta": 0.6033,
+        "precision": 0.5653,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 83,
+        "fn": 1,
+        "support": 60,
+        "params": {
+          "overlap_density": 0.5,
+          "overlap_sir_db": -5.0
+        }
+      },
+      {
+        "label": "overlap_d0.75_sir+0dB",
+        "f_beta": 0.6197,
+        "precision": 0.5912,
+        "recall": 0.95,
+        "tp": 57,
+        "fp": 86,
+        "fn": 3,
+        "support": 60,
+        "params": {
+          "overlap_density": 0.75
+        }
+      },
+      {
+        "label": "overlap_d0.75_sir+10dB",
+        "f_beta": 0.7151,
+        "precision": 0.6819,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 45,
+        "fn": 1,
+        "support": 60,
+        "params": {
+          "overlap_density": 0.75,
+          "overlap_sir_db": 10.0
+        }
+      },
+      {
+        "label": "overlap_d0.75_sir-5dB",
+        "f_beta": 0.639,
+        "precision": 0.6065,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 84,
+        "fn": 1,
+        "support": 60,
+        "params": {
+          "overlap_density": 0.75,
+          "overlap_sir_db": -5.0
+        }
+      },
+      {
+        "label": "overlap_d1.00_sir+0dB",
+        "f_beta": 0.6173,
+        "precision": 0.6178,
+        "recall": 0.8167,
+        "tp": 49,
+        "fp": 69,
+        "fn": 11,
+        "support": 60,
+        "params": {
+          "overlap_density": 1.0
+        }
+      },
+      {
+        "label": "overlap_d1.00_sir+10dB",
+        "f_beta": 0.7382,
+        "precision": 0.7083,
+        "recall": 0.9667,
+        "tp": 58,
+        "fp": 35,
+        "fn": 2,
+        "support": 60,
+        "params": {
+          "overlap_density": 1.0,
+          "overlap_sir_db": 10.0
+        }
+      },
+      {
+        "label": "overlap_d1.00_sir-5dB",
+        "f_beta": 0.5827,
+        "precision": 0.5968,
+        "recall": 0.75,
+        "tp": 45,
+        "fp": 82,
+        "fn": 15,
+        "support": 60,
+        "params": {
+          "overlap_density": 1.0,
+          "overlap_sir_db": -5.0
+        }
+      }
+    ],
+    "distance": [
+      {
+        "label": "distance_10m",
+        "f_beta": 0.8844,
+        "precision": 0.8662,
+        "recall": 0.9667,
+        "tp": 58,
+        "fp": 9,
+        "fn": 2,
+        "support": 60,
+        "level": 10.0,
+        "params": {
+          "distance_m": 10.0
+        }
+      },
+      {
+        "label": "distance_25m",
+        "f_beta": 0.8501,
+        "precision": 0.829,
+        "recall": 0.95,
+        "tp": 57,
+        "fp": 12,
+        "fn": 3,
+        "support": 60,
+        "level": 25.0,
+        "params": {
+          "distance_m": 25.0
+        }
+      },
+      {
+        "label": "distance_50m",
+        "f_beta": 0.8999,
+        "precision": 0.8838,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 9,
+        "fn": 1,
+        "support": 60,
+        "level": 50.0,
+        "params": {
+          "distance_m": 50.0
+        }
+      },
+      {
+        "label": "distance_100m",
+        "f_beta": 0.8968,
+        "precision": 0.8813,
+        "recall": 0.9667,
+        "tp": 58,
+        "fp": 8,
+        "fn": 2,
+        "support": 60,
+        "level": 100.0,
+        "params": {
+          "distance_m": 100.0
+        }
+      },
+      {
+        "label": "distance_200m",
+        "f_beta": 0.9003,
+        "precision": 0.8823,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 8,
+        "fn": 1,
+        "support": 60,
+        "level": 200.0,
+        "params": {
+          "distance_m": 200.0
+        }
+      }
+    ],
+    "reverb": [
+      {
+        "label": "reverb_rt60_0.1s",
+        "f_beta": 0.8766,
+        "precision": 0.8514,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 11,
+        "fn": 0,
+        "support": 60,
+        "level": 0.1,
+        "params": {
+          "distance_m": 10.0,
+          "rt60_s": 0.1
+        }
+      },
+      {
+        "label": "reverb_rt60_0.2s",
+        "f_beta": 0.8861,
+        "precision": 0.8625,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 10,
+        "fn": 0,
+        "support": 60,
+        "level": 0.2,
+        "params": {
+          "distance_m": 10.0,
+          "rt60_s": 0.2
+        }
+      },
+      {
+        "label": "reverb_rt60_0.4s",
+        "f_beta": 0.8628,
+        "precision": 0.8385,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 12,
+        "fn": 1,
+        "support": 60,
+        "level": 0.4,
+        "params": {
+          "distance_m": 10.0
+        }
+      },
+      {
+        "label": "reverb_rt60_0.8s",
+        "f_beta": 0.9197,
+        "precision": 0.9146,
+        "recall": 0.95,
+        "tp": 57,
+        "fp": 6,
+        "fn": 3,
+        "support": 60,
+        "level": 0.8,
+        "params": {
+          "distance_m": 10.0,
+          "rt60_s": 0.8
+        }
+      }
+    ],
+    "bandwidth": [
+      {
+        "label": "bandlimit_12000Hz",
+        "f_beta": 0.892,
+        "precision": 0.8725,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 9,
+        "fn": 1,
+        "support": 60,
+        "params": {
+          "band_limit_hz": 12000.0
+        }
+      },
+      {
+        "label": "bandlimit_2000Hz",
+        "f_beta": 0.8651,
+        "precision": 0.9648,
+        "recall": 0.6833,
+        "tp": 41,
+        "fp": 2,
+        "fn": 19,
+        "support": 60,
+        "params": {
+          "band_limit_hz": 2000.0
+        }
+      },
+      {
+        "label": "bandlimit_4000Hz",
+        "f_beta": 0.8765,
+        "precision": 0.8668,
+        "recall": 0.9333,
+        "tp": 56,
+        "fp": 9,
+        "fn": 4,
+        "support": 60,
+        "params": {
+          "band_limit_hz": 4000.0
+        }
+      },
+      {
+        "label": "bandlimit_8000Hz",
+        "f_beta": 0.8923,
+        "precision": 0.8732,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 9,
+        "fn": 1,
+        "support": 60,
+        "params": {
+          "band_limit_hz": 8000.0
+        }
+      },
+      {
+        "label": "resample_16000Hz",
+        "f_beta": 0.8971,
+        "precision": 0.8757,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 9,
+        "fn": 0,
+        "support": 60,
+        "params": {
+          "resample_hz": 16000
+        }
+      },
+      {
+        "label": "resample_22050Hz",
+        "f_beta": 0.8878,
+        "precision": 0.865,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 10,
+        "fn": 0,
+        "support": 60,
+        "params": {
+          "resample_hz": 22050
+        }
+      },
+      {
+        "label": "resample_24000Hz",
+        "f_beta": 0.8971,
+        "precision": 0.8757,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 9,
+        "fn": 0,
+        "support": 60,
+        "params": {
+          "resample_hz": 24000
+        }
+      },
+      {
+        "label": "resample_8000Hz",
+        "f_beta": 0.6991,
+        "precision": 0.8148,
+        "recall": 0.5667,
+        "tp": 34,
+        "fp": 1,
+        "fn": 26,
+        "support": 60,
+        "params": {
+          "resample_hz": 8000
+        }
+      }
+    ],
+    "quantisation": [
+      {
+        "label": "pcm_4bit",
+        "f_beta": 0.9515,
+        "precision": 0.9667,
+        "recall": 0.9,
+        "tp": 54,
+        "fp": 2,
+        "fn": 6,
+        "support": 60,
+        "level": 4.0,
+        "params": {
+          "bit_depth": 4
+        }
+      },
+      {
+        "label": "pcm_6bit",
+        "f_beta": 0.9369,
+        "precision": 0.9268,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 5,
+        "fn": 1,
+        "support": 60,
+        "level": 6.0,
+        "params": {
+          "bit_depth": 6
+        }
+      },
+      {
+        "label": "mulaw_8bit",
+        "f_beta": 0.8878,
+        "precision": 0.865,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 10,
+        "fn": 0,
+        "support": 60,
+        "level": 8.0,
+        "params": {
+          "bit_depth": 8,
+          "codec": "mu-law"
+        }
+      },
+      {
+        "label": "pcm_8bit",
+        "f_beta": 0.9003,
+        "precision": 0.8823,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 8,
+        "fn": 1,
+        "support": 60,
+        "level": 8.0,
+        "params": {
+          "bit_depth": 8
+        }
+      },
+      {
+        "label": "pcm_10bit",
+        "f_beta": 0.9034,
+        "precision": 0.8868,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 8,
+        "fn": 1,
+        "support": 60,
+        "level": 10.0,
+        "params": {
+          "bit_depth": 10
+        }
+      },
+      {
+        "label": "pcm_12bit",
+        "f_beta": 0.9077,
+        "precision": 0.8883,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 8,
+        "fn": 0,
+        "support": 60,
+        "level": 12.0,
+        "params": {
+          "bit_depth": 12
+        }
+      },
+      {
+        "label": "pcm_16bit",
+        "f_beta": 0.9077,
+        "precision": 0.8883,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 8,
+        "fn": 0,
+        "support": 60,
+        "level": 16.0,
+        "params": {
+          "bit_depth": 16
+        }
+      }
+    ],
+    "clipping": [
+      {
+        "label": "clip_0.001",
+        "f_beta": 0.9077,
+        "precision": 0.8883,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 8,
+        "fn": 0,
+        "support": 60,
+        "level": 0.001,
+        "params": {
+          "clip_fraction": 0.001
+        }
+      },
+      {
+        "label": "clip_0.005",
+        "f_beta": 0.9077,
+        "precision": 0.8883,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 8,
+        "fn": 0,
+        "support": 60,
+        "level": 0.005,
+        "params": {
+          "clip_fraction": 0.005
+        }
+      },
+      {
+        "label": "clip_0.010",
+        "f_beta": 0.9077,
+        "precision": 0.8883,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 8,
+        "fn": 0,
+        "support": 60,
+        "level": 0.01,
+        "params": {
+          "clip_fraction": 0.01
+        }
+      },
+      {
+        "label": "clip_0.050",
+        "f_beta": 0.8645,
+        "precision": 0.8429,
+        "recall": 0.9667,
+        "tp": 58,
+        "fp": 11,
+        "fn": 2,
+        "support": 60,
+        "level": 0.05,
+        "params": {
+          "clip_fraction": 0.05
+        }
+      },
+      {
+        "label": "clip_0.100",
+        "f_beta": 0.8359,
+        "precision": 0.8156,
+        "recall": 0.9333,
+        "tp": 56,
+        "fp": 13,
+        "fn": 4,
+        "support": 60,
+        "level": 0.1,
+        "params": {
+          "clip_fraction": 0.1
+        }
+      }
+    ],
+    "gain": [
+      {
+        "label": "gain_-40dB",
+        "f_beta": 0.9077,
+        "precision": 0.8883,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 8,
+        "fn": 0,
+        "support": 60,
+        "level": -40.0,
+        "params": {
+          "gain_db": -40.0
+        }
+      },
+      {
+        "label": "gain_-20dB",
+        "f_beta": 0.9077,
+        "precision": 0.8883,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 8,
+        "fn": 0,
+        "support": 60,
+        "level": -20.0,
+        "params": {
+          "gain_db": -20.0
+        }
+      },
+      {
+        "label": "gain_-6dB",
+        "f_beta": 0.9077,
+        "precision": 0.8883,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 8,
+        "fn": 0,
+        "support": 60,
+        "level": -6.0,
+        "params": {
+          "gain_db": -6.0
+        }
+      },
+      {
+        "label": "gain_+6dB",
+        "f_beta": 0.9077,
+        "precision": 0.8883,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 8,
+        "fn": 0,
+        "support": 60,
+        "level": 6.0,
+        "params": {
+          "gain_db": 6.0
+        }
+      },
+      {
+        "label": "gain_+20dB",
+        "f_beta": 0.9077,
+        "precision": 0.8883,
+        "recall": 1.0,
+        "tp": 60,
+        "fp": 8,
+        "fn": 0,
+        "support": 60,
+        "level": 20.0,
+        "params": {
+          "gain_db": 20.0
+        }
+      }
+    ],
+    "composite": [
+      {
+        "label": "archive_telephony_grade",
+        "f_beta": 0.6347,
+        "precision": 0.8333,
+        "recall": 0.4667,
+        "tp": 28,
+        "fp": 0,
+        "fn": 32,
+        "support": 60,
+        "params": {
+          "distance_m": 25.0,
+          "resample_hz": 8000,
+          "bit_depth": 8,
+          "codec": "mu-law"
+        }
+      },
+      {
+        "label": "cheap_recorder_windy_morning",
+        "f_beta": 0.9157,
+        "precision": 0.9019,
+        "recall": 0.9833,
+        "tp": 59,
+        "fp": 7,
+        "fn": 1,
+        "support": 60,
+        "params": {
+          "noise_type": "wind",
+          "snr_db": 5.0,
+          "band_limit_hz": 8000.0,
+          "resample_hz": 16000,
+          "bit_depth": 12,
+          "gain_db": -12.0
+        }
+      },
+      {
+        "label": "dawn_chorus_close",
+        "f_beta": 0.6743,
+        "precision": 0.6576,
+        "recall": 0.9,
+        "tp": 54,
+        "fp": 62,
+        "fn": 6,
+        "support": 60,
+        "params": {
+          "noise_type": "pink",
+          "snr_db": 10.0,
+          "overlap_density": 0.75
+        }
+      },
+      {
+        "label": "distant_bird_light_rain",
+        "f_beta": 0.7416,
+        "precision": 0.9762,
+        "recall": 0.5333,
+        "tp": 32,
+        "fp": 1,
+        "fn": 28,
+        "support": 60,
+        "params": {
+          "noise_type": "rain",
+          "snr_db": 0.0,
+          "distance_m": 50.0
+        }
+      },
+      {
+        "label": "overdriven_roadside",
+        "f_beta": 0.9063,
+        "precision": 0.8972,
+        "recall": 0.95,
+        "tp": 57,
+        "fp": 7,
+        "fn": 3,
+        "support": 60,
+        "params": {
+          "noise_type": "brown",
+          "snr_db": 0.0,
+          "bit_depth": 16,
+          "clip_fraction": 0.01,
+          "gain_db": 12.0
+        }
+      }
+    ]
+  }
+}

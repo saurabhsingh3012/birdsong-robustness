@@ -1,10 +1,10 @@
 # Roadmap
 
-This project is an instrument that is calibrated but not yet pointed at anything. The degradation
-pipeline is built and validated ([README, Results](README.md#results-what-is-actually-measured));
-the protocol a classifier plugs into is specified and tested (`protocol.py`). What is missing is
-everything downstream of "and now run a real model on real audio". This document is candid about
-that gap, in the order the work has to happen.
+This project's instrument is calibrated **and now pointed at a real classifier**: BirdNET has
+been swept across the full degradation grid on a real Xeno-canto set, and the measured degradation
+curves are in the README's Results — real audio section (`docs/real_eval_results.json`). That
+closes Milestones 1 and 2 below. What remains is making the degradations *realistic* (not just
+calibrated) and scaling the evaluation past six easy species — the honest gaps, in order.
 
 ## Now: what exists and is verifiable
 
@@ -17,37 +17,31 @@ that gap, in the order the work has to happen.
   curves, and a minimal model interface. All of it is unit-tested end to end against synthetic
   inputs and a stand-in model. **None of it has seen a real classifier.**
 
-## Milestone 1 — a real dataset behind the manifest
+## Milestone 1 — a real dataset behind the manifest ✅ (partial)
 
-The manifest schema exists; no data fills it. This is the first blocker and the least glamorous.
+- [x] Assembled a real evaluation set: `scripts/build_dataset.py` pulls quality-A focal recordings
+      for six species from the Xeno-canto v3 API and writes a `protocol.Manifest`. **Clip-level
+      labels only** — the strong (time-localised) labels that would make the SNR and overlap axes
+      exact are still future work; those axes currently use the energy-based active-region estimate.
+- [x] **Licensing handled by not redistributing audio.** `data/` is git-ignored; the set is rebuilt
+      locally from the API, and per-recording attribution + licences are committed in
+      `docs/DATA_SOURCES.md`.
+- [x] Manifest validated with `protocol.validate_manifest` (clean).
+- [ ] Still open: strong labels; BirdCLEF/DCASE soundscapes; and a proper audit of the confounds
+      the schema records (recorder/provenance vs. species distribution) — the six-species focal set
+      is favourable and does not stress these yet.
 
-- [ ] Assemble a strongly-labelled evaluation set (Xeno-canto focal recordings + BirdCLEF/DCASE
-      soundscapes are the obvious sources). Strong labels matter: half the axes (SNR-during-call,
-      overlap density) are only well defined with time-localised events, not clip tags.
-- [ ] **Resolve licensing before distributing anything.** Xeno-canto terms vary per recording;
-      this repository ships no audio precisely to avoid baking a licensing problem into Git
-      history. A manifest that references audio by URL + checksum, with a downloader, is the likely
-      shape — not a blob in the repo.
-- [ ] Validate the manifest with `protocol.validate_manifest` and, more importantly, audit the
-      **confounds** the schema deliberately records: recorder type and provenance correlating with
-      species distribution would let the benchmark attribute to *degradation* what is really an
-      artefact of *which species were recorded on which device*.
+## Milestone 2 — the first real model integration ✅
 
-## Milestone 2 — the first real model integration
-
-`protocol.BioacousticModel` is a two-method interface. Wiring a real model to it is where the
-hidden decisions live, and each one can silently change what the benchmark measures:
-
-- [ ] Adapt a classifier (BirdNET is the natural first, given the author's prior work) behind the
-      interface. **No weights are in this environment; this cannot be done here.**
-- [ ] Fix, and record, the three things the interface docstring flags: the resampler used to reach
-      the model's native rate (must be identical across every condition, or the bandwidth axis is
-      partly measuring the adapter); the window-to-clip score aggregation (max / mean / top-k, which
-      changes the precision-recall trade on its own); and any built-in per-clip normalisation (which
-      will partly undo the gain and clipping axes — legitimate, but it must be *known*, or those
-      axes look flat for the wrong reason).
-- [ ] Only then produce the first degradation curves. When they appear, they carry the checkpoint
-      hash, dataset, and date. Until then the README Results section stays as it is.
+- [x] Adapted BirdNET behind the interface (`src/birdsong_robustness/birdnet_adapter.py`), via
+      `birdnetlib` + a TFLite backend. BirdNET was the natural first, given the author's prior work.
+- [x] Fixed and recorded the three flagged decisions: **resampling** — the whole pipeline runs at
+      BirdNET's 48 kHz, so there is no resampler in the path at all; **window→clip aggregation** —
+      max confidence over the clip's 3-second windows, recorded in the results; **built-in
+      normalisation** — BirdNET's internal per-window standardisation is left on (legitimate model
+      behaviour) and the gain axis is read as "model + its own AGC", noted in the limitations.
+- [x] Produced the first degradation curves (`scripts/run_real_eval.py` → `docs/real_eval_results.json`),
+      carrying model id, dataset, and date. The README Results section now reports them.
 
 ## Milestone 3 — validate the degradations against reality
 
@@ -83,7 +77,7 @@ that what it says resembles a forest.
 
 ## The one-line summary for an interviewer
 
-*The instrument is built and proven calibrated. What stands between it and a published robustness
-result is a licensed strongly-labelled dataset and one real model integration — and the reason
-there are no accuracy numbers yet is that inventing them is exactly the failure mode this project
-was built to prevent.*
+*The instrument is built, proven calibrated, and now run: BirdNET, on real Xeno-canto audio,
+across the full grid, producing real degradation curves. Every number carries its model, dataset
+and date — because inventing them is exactly the failure mode this project was built to prevent.
+What is left is realism over calibration, and scale over six easy species.*

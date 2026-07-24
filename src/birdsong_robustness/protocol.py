@@ -1,19 +1,20 @@
 """The benchmark protocol: manifest schema, degradation grid, metrics, and the model interface.
 
-STATUS: AWAITING MODEL INTEGRATION
-==================================
-Everything in this module is implemented and unit-tested against synthetic inputs, and **no
-classifier has been run against it**. There are no model weights in this repository and none in
-the environment it was developed in. Consequently there are no accuracy numbers here, in the
-README, or anywhere else in the project, and any that appear in future must carry the model
-version, the checkpoint hash, the dataset, and the date they were produced.
+STATUS: EXERCISED ON A REAL CLASSIFIER
+======================================
+Everything in this module is implemented, unit-tested against synthetic inputs, and now
+**exercised for real**: BirdNET has been swept across the grid below on a real Xeno-canto set by
+``scripts/run_real_eval.py``, and the measured degradation curves live in
+``docs/real_eval_results.json`` and the README's "Results -- real audio" section. Those numbers
+carry the model id, the dataset, and the date, as this module always insisted they must; none was
+invented, and the classifier-free calibration of the degradations themselves is unchanged.
 
-What is real today is the degradation pipeline and its calibration -- see
-:mod:`birdsong_robustness.validate` and the Results section of the README. What is specified but
-not yet exercised is the evaluation on the next page down: the manifest a real dataset would have
-to supply, the grid a model would be swept over, the metrics that would be computed, and the
-adapter a model would implement. Writing that down first is deliberate; a robustness protocol
-decided *after* seeing which conditions a model happens to survive is not a protocol.
+The design that made that run trustworthy is worth restating, because it is the point. The grid
+was written down *before* any model was run -- a robustness protocol decided *after* seeing which
+conditions a model happens to survive is not a protocol. The manifest schema, the
+one-factor-at-a-time grid, the frozen-threshold metrics, and the model-adapter interface are all
+below; the separate, classifier-free calibration that proves each degradation measures back its
+requested parameter lives in :mod:`birdsong_robustness.validate`.
 
 Why the grid is one-factor-at-a-time, plus a few named composites
 ----------------------------------------------------------------
@@ -98,10 +99,13 @@ __all__ = [
     "validate_manifest",
 ]
 
-#: Single source of truth for the claim the README, the CLI banner and the docs all repeat.
+#: Single source of truth for the status the README, the CLI banner and the docs all repeat.
 PROTOCOL_STATUS = (
-    "awaiting model integration -- the protocol is specified and tested, "
-    "but no classifier has been evaluated and no accuracy numbers exist"
+    "exercised -- BirdNET has been evaluated on a real Xeno-canto set via "
+    "scripts/run_real_eval.py, and the measured degradation curves are in "
+    "docs/real_eval_results.json, carrying model id, dataset and date. The classifier-free "
+    "validate harness in this package still reports only degradation-pipeline calibration, and "
+    "any accuracy number quoted anywhere must carry its model, dataset and date"
 )
 
 

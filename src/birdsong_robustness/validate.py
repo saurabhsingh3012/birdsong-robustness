@@ -857,9 +857,10 @@ def format_report(report: ValidationReport, show_observations: bool = True) -> s
         "Requested parameters against parameters measured back from the output waveform.",
         "Measurements are independent of the code being measured; see verify.py.",
         "",
-        f"NO CLASSIFIER HAS BEEN EVALUATED. Protocol status: {protocol.PROTOCOL_STATUS}.",
-        "This report validates the degradation pipeline only. It contains no accuracy numbers",
-        "and none should be inferred from it.",
+        "This validation report involves no classifier: it checks the degradation pipeline only",
+        "and contains no accuracy numbers, and none should be inferred from it. The real-audio",
+        "classifier results (BirdNET on a Xeno-canto set) are produced separately by",
+        "scripts/run_real_eval.py -- see docs/real_eval_results.json and the README.",
     ]
     lines.append(_format_check_table(report.checks))
     if show_observations and report.observations:

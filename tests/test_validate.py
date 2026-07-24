@@ -102,5 +102,6 @@ def test_main_returns_zero_on_success(capsys):
     code = validate.main(["--no-observations"])
     captured = capsys.readouterr()
     assert code == 0
-    assert "NO CLASSIFIER HAS BEEN EVALUATED" in captured.out
+    # The validate report is classifier-free by design; it must say so and quote no accuracy.
+    assert "involves no classifier" in captured.out
     assert "within tolerance" in captured.out
