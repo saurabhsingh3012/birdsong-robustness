@@ -2,7 +2,7 @@
 
 The real-audio results in the README are computed on focal recordings from
 [Xeno-canto](https://xeno-canto.org), rebuilt locally by `scripts/build_dataset.py`.
-**No audio is redistributed in this repository** — Xeno-canto recordings carry
+**No audio is redistributed in this repository.** Xeno-canto recordings carry
 per-recording Creative Commons licences (listed below), so `data/` is git-ignored and
 only this attribution and the measured results are committed. Every recording is
 quality grade **A** (Xeno-canto's highest). Each clip used is a 12-second,
